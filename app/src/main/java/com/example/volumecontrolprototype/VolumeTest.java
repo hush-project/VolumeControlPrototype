@@ -1,19 +1,26 @@
 package com.example.volumecontrolprototype;
 
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.media.AudioManager;
 import android.content.Context;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Toast;
+import android.app.NotificationManager;
+import android.content.Intent;
+import android.provider.Settings;
 
 
 public class VolumeTest extends AppCompatActivity
 {
-    Button silentB, vibrateB, ringB;
+    Button silentB, vibrateB, ringB, permissionB;
+    private CheckBox permissionCheckbox;
 
     AudioManager aManager;
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -22,11 +29,11 @@ public class VolumeTest extends AppCompatActivity
         setContentView(R.layout.volume_test);
 
         aManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-        Context context = getApplicationContext();
+        context = getApplicationContext();
 
-        ringB = (Button)findViewById(R.id.ringB);
-        silentB = (Button)findViewById(R.id.silentB);
-        vibrateB = (Button)findViewById(R.id.vibrateB);
+        ringB = (Button)findViewById(R.id.btnRing);
+        silentB = (Button)findViewById(R.id.btnSilent);
+        vibrateB = (Button)findViewById(R.id.btnVibrate);
 
         //Set a default button state based on current volume setting
         int currentMode = aManager.getRingerMode(); //Ringer Mode is silent by default
@@ -44,62 +51,68 @@ public class VolumeTest extends AppCompatActivity
             silentB.setBackgroundResource(R.color.colorAccent);
         }
 
+
+//        permissionB = (Button) findViewById(R.id.btnPermission);
+//        permissionB.setOnClickListener(new View.OnClickListener()
+//        {
+//            @Override
+//            public void onClick(View view)
+//            {
+//                onPermissionsClicked();
+//            }
+//        });
     }//end method onCreate
+
+    public void onPermissionsClicked(View v)
+    {
+        Intent intent = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
+        {
+            intent = new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+        }
+        startActivity(intent);
+    }
+
 
     public void clickSilent(View v)
     {
-        //if silent button is clicked
-        silentB.setOnClickListener(new View.OnClickListener()
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT < 24 || (Build.VERSION.SDK_INT >= 24 && notificationManager.isNotificationPolicyAccessGranted()))
         {
-            @Override
-            public void onClick(View v)
-            {
-                aManager.setRingerMode(0);
-                Toast.makeText(getApplicationContext(), "Silent Mode Activated", Toast.LENGTH_SHORT).show();
+            aManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+            Toast.makeText(getApplicationContext(),"Silent Mode Activated",Toast.LENGTH_SHORT).show();
 
-                //change the color of the silent button to be lighter
-                ringB.setBackgroundResource(R.color.colorPrimary);
-                vibrateB.setBackgroundResource(R.color.colorPrimary);
-                silentB.setBackgroundResource(R.color.colorAccent);
-            }
-        });//end code for silent button listener
-    }
+            ringB.setBackgroundResource(R.color.colorPrimary);
+            silentB.setBackgroundResource(R.color.colorAccent);
+            vibrateB.setBackgroundResource(R.color.colorPrimary);
+        }
+    }//end clickSilent
 
     public void clickVibrate(View v)
     {
-        //if vibrate button is clicked
-        vibrateB.setOnClickListener(new View.OnClickListener()
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if(Build.VERSION.SDK_INT < 24 || (Build.VERSION.SDK_INT >= 24 && notificationManager.isNotificationPolicyAccessGranted()))
         {
-            @Override
-            public void onClick(View v)
-            {
-                aManager.setRingerMode(1);
-                Toast.makeText(getApplicationContext(), "Vibrate Mode Activated", Toast.LENGTH_SHORT).show();
+            aManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+            Toast.makeText(getApplicationContext(),"Vibrate Mode Activated",Toast.LENGTH_SHORT).show();
 
-                //change the color of the silent button to be lighter
-                ringB.setBackgroundResource(R.color.colorPrimary);
-                silentB.setBackgroundResource(R.color.colorPrimary);
-                vibrateB.setBackgroundResource(R.color.colorAccent);
-            }
-        });//end code for vibrate button listener
+            ringB.setBackgroundResource(R.color.colorPrimary);
+            vibrateB.setBackgroundResource(R.color.colorAccent);
+            silentB.setBackgroundResource(R.color.colorPrimary);
+        }
     }//end clickVibrate
 
     public void clickRing(View v)
     {
-        //if ring button is clicked
-        ringB.setOnClickListener(new View.OnClickListener()
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT < 24 || (Build.VERSION.SDK_INT >= 24 && notificationManager.isNotificationPolicyAccessGranted()))
         {
-            @Override
-            public void onClick(View v)
-            {
-                aManager.setRingerMode(2);
-                Toast.makeText(getApplicationContext(), "Ring Mode Activated", Toast.LENGTH_SHORT).show();
+            aManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+            Toast.makeText(getApplicationContext(),"Ring Mode Activated",Toast.LENGTH_SHORT).show();
 
-                //change the color of the silent button to be lighter
-                silentB.setBackgroundResource(R.color.colorPrimary);
-                vibrateB.setBackgroundResource(R.color.colorPrimary);
-                ringB.setBackgroundResource(R.color.colorAccent);
-            }
-        });//end code for ring button listener
-    }
+            silentB.setBackgroundResource(R.color.colorPrimary);
+            ringB.setBackgroundResource(R.color.colorAccent);
+            vibrateB.setBackgroundResource(R.color.colorPrimary);
+        }
+    }//end clickRing
 }//end class VolumeTest

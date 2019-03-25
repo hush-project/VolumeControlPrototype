@@ -4,23 +4,31 @@
     android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/ringB"
+        android:id="@+id/btnRing"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="clickRing"
         android:text="Ring" />
 
     <Button
-        android:id="@+id/vibrateB"
+        android:id="@+id/btnVibrate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="clickVibrate"
         android:text="Vibrate" />
 
     <Button
-        android:id="@+id/silentB"
+        android:id="@+id/btnSilent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="clickSilent"
         android:text="Silent (Mute)" />
+
+    <Button
+        android:id="@+id/btnPermission"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onPermissionsClicked"
+        android:text="Grant Audio Permission" />
+
 </LinearLayout>
